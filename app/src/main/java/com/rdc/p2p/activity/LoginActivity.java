@@ -53,6 +53,7 @@ public class LoginActivity extends BaseActivity {
 
     private List<ImageBean> mImageList;
     private int mSelectedImageId;
+
     @Override
     public BasePresenter getInstance() {
         return null;
@@ -69,13 +70,14 @@ public class LoginActivity extends BaseActivity {
 
     /**
      * 获取储存权限
+     *
      * @param activity
      * @return
      */
 
     public void getPermission(Activity activity) {
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ) {
+                || ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 activity.requestPermissions(new String[]{
                         Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -88,21 +90,22 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
+        switch (requestCode) {
             case 1:
-                if (grantResults.length > 0){
+                if (grantResults.length > 0) {
                     for (int grantResult : grantResults) {
                         if (grantResult != PackageManager.PERMISSION_GRANTED) {
                             finish();
                             showToast("拒绝授权，无法使用本应用！");
                         }
                     }
-                }else {
+                } else {
                     showToast("拒绝授权，无法使用本应用！");
                 }
                 break;
         }
     }
+
     @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
@@ -127,7 +130,11 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-
+        UserBean user = UserUtil.getUser();
+        String nickName = user.getNickName();
+        int userImageId = user.getUserImageId();
+        setImageId(userImageId);
+        mEtNickname.setText(nickName);
     }
 
     @Override
@@ -136,27 +143,27 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 SelectImageFragment selectImageFragment = new SelectImageFragment();
-                selectImageFragment.show(getSupportFragmentManager(),"DialogFragment");
+                selectImageFragment.show(getSupportFragmentManager(), "DialogFragment");
             }
         });
 
         mBtnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!TextUtils.isEmpty(mEtNickname.getText())){
+                if (!TextUtils.isEmpty(mEtNickname.getText())) {
                     UserBean userBean = new UserBean();
                     userBean.setNickName(getString(mEtNickname));
                     userBean.setUserImageId(mSelectedImageId);
                     UserUtil.saveUser(userBean);
                     App.setUserBean(userBean);
-                    if (NetUtil.isWifi(LoginActivity.this)){
+                    if (NetUtil.isWifi(LoginActivity.this)) {
                         ScanDeviceFragment scanDeviceFragment = new ScanDeviceFragment();
                         scanDeviceFragment.setCancelable(false);
-                        scanDeviceFragment.show(getSupportFragmentManager(),"progressFragment");
-                    }else {
+                        scanDeviceFragment.show(getSupportFragmentManager(), "progressFragment");
+                    } else {
                         showToast("请连接WIFI！");
                     }
-                }else {
+                } else {
                     showToast("昵称不能为空！");
                 }
             }
@@ -164,14 +171,14 @@ public class LoginActivity extends BaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void ScanDeviceFinished(List<String> ipList){
-        Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+    public void ScanDeviceFinished(List<String> ipList) {
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         intent.putStringArrayListExtra("ipList", (ArrayList<String>) ipList);
         startActivity(intent);
         finish();
     }
 
-    public void setImageId(int imageId){
+    public void setImageId(int imageId) {
         mSelectedImageId = imageId;
         Glide.with(this).load(ImageUtil.getImageResId(imageId)).into(mCivUserImage);
     }

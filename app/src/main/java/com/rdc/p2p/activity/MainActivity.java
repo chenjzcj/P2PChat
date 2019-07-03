@@ -1,42 +1,30 @@
 package com.rdc.p2p.activity;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.pm.PackageManager;
-import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.rdc.p2p.R;
 import com.rdc.p2p.base.BaseActivity;
 import com.rdc.p2p.base.BasePresenter;
+import com.rdc.p2p.fragment.AboutFragment;
+import com.rdc.p2p.fragment.JoinFragment;
 import com.rdc.p2p.fragment.PeerListFragment;
 import com.rdc.p2p.fragment.ScanDeviceFragment;
-import com.rdc.p2p.manager.SocketManager;
 
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 
@@ -44,7 +32,7 @@ public class MainActivity extends BaseActivity {
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
-//    @BindView(R.id.dl_drawer_act_main)
+    //    @BindView(R.id.dl_drawer_act_main)
 //    DrawerLayout mDrawerLayout;
 //    @BindView(R.id.ll_bottom_left_layout_act_main)
 //    LinearLayout mLlBottomLeft;
@@ -60,6 +48,24 @@ public class MainActivity extends BaseActivity {
 //    LinearLayout mLlBottomRight;
     @BindView(R.id.vp_act_main)
     ViewPager mVpContent;
+    @BindView(R.id.tv_title)
+    TextView tvTitle;
+    @BindView(R.id.v_divider)
+    View vDivider;
+    @BindView(R.id.tv_chat)
+    TextView tvChat;
+    @BindView(R.id.ll_chat)
+    LinearLayout llChat;
+    @BindView(R.id.tv_join)
+    TextView tvJoin;
+    @BindView(R.id.ll_join)
+    LinearLayout llJoin;
+    @BindView(R.id.tv_about)
+    TextView tvAbout;
+    @BindView(R.id.ll_about)
+    LinearLayout llAbout;
+    @BindView(R.id.ll_bottom)
+    LinearLayout llBottom;
 
     private FragmentPagerAdapter mFragmentPagerAdapter;
     private boolean checking = true;// true 选中聊天列表 , false 选中 聊天室
@@ -71,7 +77,7 @@ public class MainActivity extends BaseActivity {
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message message) {
-            switch (message.what){
+            switch (message.what) {
                 case 0:
 //                    mTvShow.append("\n"+message.obj.toString());
                     break;
@@ -88,7 +94,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -112,7 +118,6 @@ public class MainActivity extends BaseActivity {
     }
 
 
-
     @Override
     protected void initView() {
         initToolbar();
@@ -121,19 +126,27 @@ public class MainActivity extends BaseActivity {
 //        mDrawerToggle.syncState();
 //        mDrawerLayout.addDrawerListener(mDrawerToggle);
         mPeerListFragment = new PeerListFragment();
+        final JoinFragment joinFragment = new JoinFragment();
+        final AboutFragment aboutFragment = new AboutFragment();
         mFragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
-                switch (position){
+                switch (position) {
                     case 0:
                         return mPeerListFragment;
+                    case 1:
+                        return joinFragment;
+                    case 2:
+                        return aboutFragment;
+                    default:
+                        break;
                 }
                 return null;
             }
 
             @Override
             public int getCount() {
-                return 1;
+                return 3;
             }
 
             @Override
@@ -146,7 +159,47 @@ public class MainActivity extends BaseActivity {
                 return super.saveState();
             }
         };
+        mVpContent.setOffscreenPageLimit(3);
         mVpContent.setAdapter(mFragmentPagerAdapter);
+        mVpContent.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                switchTab(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        switchTab(0);
+
+        llChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mVpContent.setCurrentItem(0);
+                switchTab(0);
+            }
+        });
+        llJoin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mVpContent.setCurrentItem(1);
+                switchTab(1);
+            }
+        });
+        llAbout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mVpContent.setCurrentItem(2);
+                switchTab(2);
+            }
+        });
     }
 
     private void initToolbar() {
@@ -159,21 +212,27 @@ public class MainActivity extends BaseActivity {
         mToolbar.setTitle("");
     }
 
+    private void switchTab(int index) {
+        tvChat.setSelected(index == 0);
+        tvJoin.setSelected(index == 1);
+        tvAbout.setSelected(index == 2);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu,menu);
+        getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.menu_search:
-                if (mPeerListFragment.isServerSocketConnected()){
+                if (mPeerListFragment.isServerSocketConnected()) {
                     ScanDeviceFragment mScanDeviceFragment = new ScanDeviceFragment();
                     mScanDeviceFragment.setCancelable(false);
-                    mScanDeviceFragment.show(getSupportFragmentManager(),"scanDevice");
-                }else {
+                    mScanDeviceFragment.show(getSupportFragmentManager(), "scanDevice");
+                } else {
                     showToast("ServerSocket未连接，请检查WIFI！");
                 }
                 break;

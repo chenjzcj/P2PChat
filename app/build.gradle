@@ -3,7 +3,10 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "com.rdc.p2p"
+        //applicationId "com.rdc.p2p"
+        //applicationId "com.qukanv.www"
+        //applicationId "com.kanjianv8.www"
+        applicationId "com.qukanv.www"
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
@@ -36,6 +39,7 @@ dependencies {
     implementation 'com.zxy.android:tiny:0.1.0'
     implementation 'org.litepal.android:core:1.6.1'
     implementation 'com.github.chrisbanes:PhotoView:2.1.3'
+    implementation 'com.android.support:support-v4:27.1.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.3.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'

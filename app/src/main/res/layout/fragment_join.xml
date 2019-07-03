@@ -1,0 +1,30 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:context="com.rdc.p2p.fragment.JoinFragment">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:drawableBottom="@mipmap/icon_qrcode"
+        android:drawablePadding="10dp"
+        android:gravity="center"
+        android:text="邀请加入"
+        android:textColor="@color/black"
+        android:textSize="22sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="start"
+        android:text="加入密聊网的步骤：\n1. 连接到同一个wifi\n2. 扫描上在的二维码，下载“密聊网”app\n3. 登录-扫描对方-成功加入"
+        android:textColor="@color/black"
+        android:textSize="15sp" />
+
+</LinearLayout>
