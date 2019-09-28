@@ -3,24 +3,113 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 27
     defaultConfig {
-        //applicationId "com.rdc.p2p"
-        //applicationId "com.qukanv.www"
-        //applicationId "com.kanjianv8.www"
-        applicationId "com.qukanv.www"
+        applicationId "com.rdc.p2p"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            applicationVariants.all { variant ->
+                variant.outputs.all { output ->
+                    def outFile = output.outputFile
+
+                    //渠道名称
+                    def buildName = "Unknown"
+                    variant.productFlavors.each { product ->
+                        buildName = product.name
+                    }
+                    if (outFile != null && outFile.name.endsWith('.apk')) {
+                        //包名格式如下：应用名_版本名_构建类型_版本码_渠道.apk
+                        //包名示例如下：TOKOK_2.2.1_debug_19_GOOGLEPLAY.apk(默认debug)
+                        def fileName = "${buildName}_${defaultConfig.versionName}_${releaseTime()}.apk"
+                        outputFileName = fileName
+                    }
+                }
+            }
         }
     }
+
+    flavorDimensions "company"
     productFlavors {
+        QUKAN {
+            applicationId "com.qukanv.www"
+
+            //是否隐藏启动闪屏页下面的产品Logo,1为隐藏,0为不隐藏
+            buildConfigField "String", "HIDDEN_BOTTOM_LOGO", '"1"'
+
+            //-----------------------广告通广告参数配置start-----------------------
+            //-----------------------媒体   ID-----------------------
+            buildConfigField "String", "APPID", '"1109547133"'
+            //-----------------------广告位 ID-----------------------
+            //【开屏】
+            buildConfigField "String", "SPLASH_POSID", '"9070473195182488"'
+            //【Banner 2.0】
+            buildConfigField "String", "BANNER2_POSID", '""'
+            //【信息流】
+            buildConfigField "String", "NATIVE_POSID_INFO_FLOW", '"1060170195490040"'
+            //【原生广告-模板类型】
+            buildConfigField "String", "NATIVE_POSID_TYPE_TPL", '""'
+            //【原生广告-模板类型 第二个】
+            buildConfigField "String", "NATIVE_POSID_TYPE_TPL_2", '""'
+            //【原生广告-自渲染 2.0类型】
+            buildConfigField "String", "NATIVE_POSID_TYPE_SELF_RENDER_2", '""'
+            //【原生广告-自渲染 1.0类型】
+            buildConfigField "String", "NATIVE_POSID_TYPE_SELF_RENDER_1_1", '"6040471165884934"'
+            buildConfigField "String", "NATIVE_POSID_TYPE_SELF_RENDER_1_2", '"7080173105188927"'
+            //【插屏广告 2.0】
+            buildConfigField "String", "INTERSTITIAL_POSID_2", '""'
+            //【激励视频广告】
+            buildConfigField "String", "REWARD_VIDEO_POSID", '""'
+            //-----------------------广告通广告参数配置end-----------------------
+        }
+
+        KANJIAN {
+            applicationId "com.kanjianv8.www"
+
+            //是否隐藏启动闪屏页下面的产品Logo,1为隐藏,0为不隐藏
+            buildConfigField "String", "HIDDEN_BOTTOM_LOGO", '"1"'
+
+            //-----------------------广告通广告参数配置start-----------------------
+            //-----------------------媒体   ID-----------------------
+            buildConfigField "String", "APPID", '"1109514973"'
+            //-----------------------广告位 ID-----------------------
+            //【开屏】
+            buildConfigField "String", "SPLASH_POSID", '"3080370180601665"'
+            //【Banner 2.0】
+            buildConfigField "String", "BANNER2_POSID", '""'
+            //【信息流】
+            buildConfigField "String", "NATIVE_POSID_INFO_FLOW", '"5050674160204723"'
+            //【原生广告-模板类型】
+            buildConfigField "String", "NATIVE_POSID_TYPE_TPL", '""'
+            //【原生广告-模板类型 第二个】
+            buildConfigField "String", "NATIVE_POSID_TYPE_TPL_2", '""'
+            //【原生广告-自渲染 2.0类型】
+            buildConfigField "String", "NATIVE_POSID_TYPE_SELF_RENDER_2", '""'
+            //【原生广告-自渲染 1.0类型】
+            buildConfigField "String", "NATIVE_POSID_TYPE_SELF_RENDER_1_1", '"7050675150506730"'
+            buildConfigField "String", "NATIVE_POSID_TYPE_SELF_RENDER_1_2", '"5010371160100687"'
+            //【插屏广告 2.0】
+            buildConfigField "String", "INTERSTITIAL_POSID_2", '""'
+            //【激励视频广告】
+            buildConfigField "String", "REWARD_VIDEO_POSID", '""'
+            //-----------------------广告通广告参数配置end-----------------------
+        }
     }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
+}
+
+//版本发布时间，参考：设置build.gradle打包时自动加时间https://blog.csdn.net/yzwfeng/article/details/83184514
+static def releaseTime() {
+    return new Date().format("yyyyMMddHHmm", TimeZone.getTimeZone("GMT+08:00"))
 }
 
 dependencies {
@@ -46,4 +135,23 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    //常用工具套装 https://github.com/Blankj/AndroidUtilCode
+    implementation 'com.blankj:utilcode:1.23.7'
+    //UI库RxTool  https://github.com/Tamsiree/RxTool ,提供各种颜色,尺寸等值
+    implementation 'com.github.vondear.RxTool:RxUI:v2.2.7'
+    //rxjava/rxandroid
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    //xbanner https://github.com/xiaohaibin/XBanner
+    implementation 'com.xhb:xbanner:1.5.1'
+    //picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
+    //cardview
+    implementation 'androidx.cardview:cardview:1.0.0'
+    //一定要导入这个
+    implementation 'io.reactivex:rxandroid:1.2.1'
+
+    implementation project(path: ':gdtlib-release')
+    implementation project(path: ':commonlibrary-release')
 }

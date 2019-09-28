@@ -22,6 +22,7 @@ import com.rdc.p2p.fragment.AboutFragment;
 import com.rdc.p2p.fragment.JoinFragment;
 import com.rdc.p2p.fragment.PeerListFragment;
 import com.rdc.p2p.fragment.ScanDeviceFragment;
+import com.rdc.p2p.gdt.NativeADCommonActivity;
 
 import java.net.InetAddress;
 import java.net.MulticastSocket;
@@ -114,9 +115,14 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-
+        NativeADCommonActivity.showNativeADDialog(this, NativeADCommonActivity.NATIVE_AD_TYPE2, -1);
     }
 
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        NativeADCommonActivity.showNativeADDialog(this, NativeADCommonActivity.NATIVE_AD_TYPE1, NativeADCommonActivity.OK_ACTION_TYPE_EXIT);
+    }
 
     @Override
     protected void initView() {

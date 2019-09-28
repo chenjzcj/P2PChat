@@ -14,10 +14,11 @@
         android:src="@mipmap/icon_secret_chat" />
 
     <TextView
+        android:id="@+id/tv_intro"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="30dp"
-        android:text="密聊网是一款基于局域网内的聊天工具。不爱传统的聊天工具，打造一个私密、干净、实时、加密的聊天神器。在这里，只有你和我！"
+        android:text="@string/aboutus"
         android:textColor="@color/black"
         android:textSize="15sp" />
 

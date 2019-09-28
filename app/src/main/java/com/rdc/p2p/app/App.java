@@ -3,9 +3,10 @@ package com.rdc.p2p.app;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
-import android.content.IntentFilter;
 
+import com.felix.gdtlib.helper.TencentAdHelper;
 import com.rdc.p2p.bean.UserBean;
+import com.rdc.p2p.gdt.TencentAdIDsImpl;
 import com.rdc.p2p.util.UserUtil;
 
 import org.litepal.LitePal;
@@ -28,6 +29,7 @@ public class App extends Application {
         sContxet = getApplicationContext();
         sUserBean = getUserBean();
         sMyIP = getMyIP();
+        TencentAdHelper.getInstance().setTencentAdIDs(new TencentAdIDsImpl());
     }
 
     public static String getMyIP() {
